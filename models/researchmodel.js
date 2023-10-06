@@ -15,7 +15,7 @@ const researchSchema = new mongoose.Schema({
     },
     type_of_presentation: {
         required: true,
-        type: String
+        type: Boolean
     },
     authors: {
         required: true,
