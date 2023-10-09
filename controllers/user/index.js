@@ -8,10 +8,15 @@ class UserController extends AbstractController {
     }
 
     static async getUsers(req, res) {
-        const users = await UserService.getUsers();
-  
-        if (users) {
-            AbstractController.successReponse(res, users, 200, "all users found")
+        try {
+            const users = await UserService.getUsers();
+      
+            if (users) {
+                AbstractController.successReponse(res, users, 200, "all users found")
+            }
+            
+        } catch (error) {
+            console.log(error)
         }
     }
 

@@ -10,21 +10,31 @@ class ResearchController extends AbstractController {
     }
 
     static async createResearch(req, res) {
-      let researchData = req.body
-      const research = await ResearchService.createResearch(researchData)
-
-      console.log(research)
-      if (research) {
-        AbstractController.successReponse(res, research, 200, "research added")
+      try {
+        let researchData = req.body
+        const research = await ResearchService.createResearch(researchData)
+  
+        console.log(research)
+        if (research) {
+          AbstractController.successReponse(res, research, 200, "research added")
+        }
+        return research
+        
+      } catch (error) {
+        console.log(error)
       }
-      return research
     }
 
     static async getAllResearch(req, res) {
-      const researchs = await ResearchService.getResearchs();
-  
-      if (researchs) {
-        AbstractController.successReponse(res, researchs, 200, "all research found")
+      try {
+        const researchs = await ResearchService.getResearchs();
+    
+        if (researchs) {
+          AbstractController.successReponse(res, researchs, 200, "all research found")
+        }
+        
+      } catch (error) {
+        console.log(error)
       }
       
     }
@@ -43,15 +53,21 @@ class ResearchController extends AbstractController {
     }
 
     static async reviewOneResearch(req, res) {
-      const id = req.params.id
-      const data = req.body
-  
-      // console.log(data)
-      const research = await researchmodel.findByIdAndUpdate(id, data, { new: true })
-  
-      console.log("",research)
-      if (!research) throw new AppError("could not approve the research", 400)
-      res.status(200).send(research)
+
+      try {
+        const id = req.params.id
+        const data = req.body
+    
+        // console.log(data)
+        const research = await researchmodel.findByIdAndUpdate(id, data, { new: true })
+    
+        console.log("",research)
+        if (!research) throw new AppError("could not approve the research", 400)
+        res.status(200).send(research)
+        
+      } catch (error) {
+        console.log(error)
+      }
     }
 
     static async downloadData(req, res) {
@@ -64,11 +80,11 @@ class ResearchController extends AbstractController {
         }
     
         // Prepare CSV content
-        let csvContent = 'Reference,Title,Category,Type of Presentation,Authors,Introduction,Methods,Results,Discussion,Keywords,Attendance Certificate,Summary\n';
+        let csvContent = 'Reference,Title,Category,Type of Presentation,Authors,Introduction,Methods,Results,Discussion,Keywords,Attendance Certificate,Summary,Reviewed,Grade,Comments\n';
     
         researchs.forEach(research => {
           const {
-            reference,
+            refenence,
             title,
             category,
             type_of_presentation,
@@ -79,10 +95,13 @@ class ResearchController extends AbstractController {
             discussion,
             keywords,
             attendance_certificate,
-            summary
+            summary,
+            reviewed,
+            score,
+            comments,
           } = research;
     
-          const row = `"${reference}","${title}","${category}","${type_of_presentation}","${authors}","${introduction}","${methods}","${results}","${discussion}","${keywords}","${attendance_certificate}","${summary}"\n`;
+          const row = `"${refenence}","${title}","${category}","${type_of_presentation}","${authors}","${introduction}","${methods}","${results}","${discussion}","${keywords}","${attendance_certificate}","${summary}","${reviewed}","${score}","${comments}"\n`;
           csvContent += row;
         });
     

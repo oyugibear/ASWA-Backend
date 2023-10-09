@@ -1,6 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
-// const routes = require('./routes/users');å
+// const routes = require('./routes/users');
 require('dotenv').config();
 const { readdirSync } = require("fs")
 const AppError = require("./errors/app-error.js")

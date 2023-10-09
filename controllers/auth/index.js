@@ -10,17 +10,26 @@ class AuthController extends AbstractController {
     }
 
     static async signup(req, res) {
-        let user = await AuthService.signup(req.body)
-    
-        user.password = undefined
-        AbstractController.successReponse(res, user, 201, "Signup success")
+        try {
+            let user = await AuthService.signup(req.body)
+        
+            user.password = undefined
+            AbstractController.successReponse(res, user, 201, "Signup success")
+            console.log("SIGN UP SUCCESS")
+        } catch (error) {
+            console.log(error)
+        }
     }
 
     static async login(req, res) {
-        let response = await AuthService.login(req.body)
-        response.user.password = undefined
-    
-        AbstractController.successReponse(res, response, 200, "Login success")
+        try {
+            let response = await AuthService.login(req.body)
+            response.user.password = undefined
+        
+            AbstractController.successReponse(res, response, 200, "Login success")
+        } catch (error) {
+            console.log(error)
+        }
     }
 
 }
