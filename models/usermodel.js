@@ -22,6 +22,9 @@ const userSchema = new mongoose.Schema({
         required: true,
         type: String,
     },
+    specialization: {
+        type: String,
+    },
     city: {
         required: true,
         type: String,
