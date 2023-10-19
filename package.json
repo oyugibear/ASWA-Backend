@@ -10,6 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "aws-sdk": "^2.1472.0",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
@@ -17,8 +18,12 @@
     "fs": "^0.0.1-security",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^7.5.3",
+    "multer-s3": "^3.0.1",
     "nanoid": "^5.0.1",
     "nodemon": "^3.0.1",
     "papaparse": "^5.4.1"
+  },
+  "devDependencies": {
+    "@types/multer-s3": "^3.0.1"
   }
 }
