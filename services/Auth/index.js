@@ -3,6 +3,7 @@ const userModel = require("../../models/usermodel.js")
 const bcrypt = require("bcryptjs")
 const jwt = require("jsonwebtoken")
 const AppError = require("../../errors/app-error.js")
+const { sendForgotEmail } = require("../Email/index.js")
 
 class AuthService extends AbstractService {
   constructor() {
@@ -33,6 +34,10 @@ class AuthService extends AbstractService {
     } catch (error) {
       console.log(error)
     }
+  }
+  static async sendForgotPasswordEmail(shortCode, email) {
+    const response = await sendForgotEmail(shortCode, email)
+    return response
   }
 }
 

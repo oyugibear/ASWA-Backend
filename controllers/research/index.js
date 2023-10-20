@@ -3,6 +3,7 @@ const Research = require("../../models/researchmodel.js")
 const ResearchService = require("../../services/Research/index.js")
 const researchmodel = require("../../models/researchmodel.js")
 const papaparse = require('papaparse');
+const AppError = require("../../errors/app-error.js");
 
 class ResearchController extends AbstractController {
     constructor() {
@@ -13,7 +14,6 @@ class ResearchController extends AbstractController {
       try {
         let researchData = req.body
         const research = await ResearchService.createResearch(researchData)
-  
         console.log(research)
         if (research) {
           AbstractController.successReponse(res, research, 200, "research added")
@@ -24,6 +24,8 @@ class ResearchController extends AbstractController {
         console.log(error)
       }
     }
+    
+
 
     static async getAllResearch(req, res) {
       try {

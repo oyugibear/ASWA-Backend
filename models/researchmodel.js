@@ -63,6 +63,10 @@ const researchSchema = new mongoose.Schema({
         // required: true,
         type: String
     },
+    documentUrl: {
+        type: String,
+        // required: true,
+    },
     score: {
         // required: true,
         type: Number
