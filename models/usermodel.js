@@ -33,6 +33,9 @@ const userSchema = new mongoose.Schema({
         required: true,
         type: String,
     },
+    passwordResetCode: {
+        type: String,
+    },
     password: { type: String, required: true },
     role: {
         required: true,
