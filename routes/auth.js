@@ -8,12 +8,12 @@ const router = express.Router()
 
 router.post('/auth/register', AuthController.signup)
 router.post('/auth/login', AuthController.login)
-// router.post(
-//     "/auth/forgot-password",
-//     [body("email").isEmail().withMessage("provide valid email address")],
-//     RequestValidator,
-//     AuthController.forgotPassword
-//   )
+router.post(
+    "/auth/forgot-password",
+    [body("email").isEmail().withMessage("provide valid email address")],
+    RequestValidator,
+    AuthController.forgotPassword
+  )
 router.post(
     "/auth/reset-password",
     [

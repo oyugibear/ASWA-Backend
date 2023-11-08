@@ -1,45 +1,57 @@
-const express = require('express');
-const mongoose = require('mongoose');
-// const routes = require('./routes/users');
-require('dotenv').config();
+require("express-async-errors")
+const path = require("path")
+require("dotenv").config({ path: path.join(__dirname, ".env") })
+require("./DB/index.js")()
+const express = require("express")
+const cookieParser = require("cookie-parser")
+const cors = require("cors")
+const morgan = require("morgan")
 const { readdirSync } = require("fs")
+const errorHandler = require("./middlewares/errorhandler.js")
 const AppError = require("./errors/app-error.js")
-const cors = require('cors');
+// require("./cron/crons.js")()
 
+const app = express()
 
-const mongoString = process.env.DATABASE_URL
-const app = express();
-// app.use('/api/v1', routes)
-app.use(cors());
-app.use(express.json());
+// Middleware
+setupMiddleware(app)
+
+// Routes
 setupRoutes(app)
 
+// Error handling
+setupErrorHandling(app)
 
-app.listen(8000, () => {
-    console.log(`Server Started at ${8000}`)
+const PORT = process.env.PORT || 8000
+
+app.listen(PORT, () => {
+  console.log(
+    `*************************** \nSERVER RUNNING ON PORT ${PORT} \n***************************`
+  )
 })
 
-mongoose.connect(mongoString);
-const database = mongoose.connection
-
-database.on('error', (error) => {
-    console.log(error)
-})
-
-database.once('connected', () => {
-    console.log('Database Connected');
-})
+function setupMiddleware(app) {
+  app.use(cookieParser())
+  app.use(cors())
+  app.use(morgan("dev"))
+  app.use(express.json())
+}
 
 function setupRoutes(app) {
-    readdirSync("./routes").forEach((r) =>
-      app.use("/api/v1", require(`./routes/${r}`))
-    )
-  
-    app.get("/", (req, res) => {
-      res.send("Welcome to ASWB API v1")
-    })
-  
-    app.all("*", () => {
-      throw new AppError("not found", 404)
-    })
-  }
+  readdirSync("./routes").forEach((r) =>
+    app.use("/api/v1", require(`./routes/${r}`))
+  )
+
+  app.get("/", (req, res) => {
+    res.send("Welcome to Jipende API v1")
+  })
+
+  app.all("*", () => {
+    throw new AppError("not found", 404)
+  })
+}
+
+function setupErrorHandling(app) {
+  app.use(errorHandler)
+}
+

@@ -44,7 +44,7 @@ const researchSchema = new mongoose.Schema({
     attachments: [{ url: String }],
     attendance_certificate: {
         required: true,
-        type: Boolean
+        type: String
     },
     summary: {
         type: String
@@ -71,6 +71,11 @@ const researchSchema = new mongoose.Schema({
         // required: true,
         type: Number
     },
-})
+    
+},
+{
+    timestamps: true,
+}
+)
 
 module.exports = mongoose.model('Research', researchSchema)
