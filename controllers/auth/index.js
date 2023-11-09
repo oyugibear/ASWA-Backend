@@ -3,8 +3,9 @@ const User = require("../../models/usermodel.js")
 const AuthService = require("../../services/Auth/index.js")
 const { nanoid } = require("nanoid")
 const bcrypt = require("bcryptjs")
-const sendWelcomeEmail = require("../../utils/sendMail.js")
+const {sendWelcomeEmail} = require("../../utils/sendMail.js")
 const AppError = require("../../errors/app-error.js")
+const usermodel = require("../../models/usermodel.js")
 
 class AuthController extends AbstractController {
     constructor() {
@@ -12,13 +13,22 @@ class AuthController extends AbstractController {
     }
 
     static async signup(req, res) {
+      const { email, password } = req.body;
       try {
-          let user = await AuthService.signup(req.body)
-      
-          user.password = undefined
-          AbstractController.successReponse(res, user, 201, "Signup success")
+        const existingUser = await usermodel.findOne({ email });
+
+        if (existingUser) {
+          return res.status(400).json({ error: 'Email already exists' });
+        }
+
+        let user = await AuthService.signup(req.body)
+    
+        user.password = undefined
+        if (user){
           sendWelcomeEmail(user.email)
           console.log("SIGN UP SUCCESS")
+        }
+        AbstractController.successReponse(res, user, 201, "Signup success")
       } catch (error) {
           console.log(error)
           throw new AppError("Please provide valid details", 400)
