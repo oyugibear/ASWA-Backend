@@ -4,6 +4,8 @@ const ResearchService = require("../../services/Research/index.js")
 const researchmodel = require("../../models/researchmodel.js")
 const papaparse = require('papaparse');
 const AppError = require("../../errors/app-error.js");
+const { sendSubmissionRecievedEmail } = require("../../utils/sendMail.js");
+const usermodel = require("../../models/usermodel.js");
 
 class ResearchController extends AbstractController {
     constructor() {
@@ -12,18 +14,26 @@ class ResearchController extends AbstractController {
 
     static async createResearch(req, res) {
       try {
-        let researchData = req.body
-        const research = await ResearchService.createResearch(researchData)
-        console.log(research)
+        let researchData = req.body;
+        let user = req.body.postedBy;
+    
+        const research = await ResearchService.createResearch(researchData);
+        console.log(research);
+    
+        // Assuming you're using Mongoose, adjust this query based on your database model
+        const existingUser = await usermodel.findOne({ _id: user });
+        console.log("Email: ", existingUser?.email);
+    
         if (research) {
-          AbstractController.successReponse(res, research, 200, "research added")
+          sendSubmissionRecievedEmail(existingUser?.email);
+          AbstractController.successReponse(res, research, 200, "research added");
         }
-        return research
-        
+        return research;
       } catch (error) {
-        console.log(error)
+        console.log(error);
       }
     }
+    
     
 
 
@@ -82,10 +92,12 @@ class ResearchController extends AbstractController {
         }
     
         // Prepare CSV content
-        let csvContent = 'Reference,Title,Category,Type of Presentation,Authors,Introduction,Methods,Results,Discussion,Keywords,Attendance Certificate,Summary,Reviewed,Grade,Comments\n';
+        let csvContent = 'Date Added,Reviewed Date,Reference,Title,Category,Type of Presentation,Authors,Introduction,Methods,Results,Discussion,Keywords,Attendance Certificate,Summary,Reviewed,Grade,Comments\n';
     
         researchs.forEach(research => {
           const {
+            createdAt,
+            updatedAt,
             refenence,
             title,
             category,
@@ -103,7 +115,7 @@ class ResearchController extends AbstractController {
             comments,
           } = research;
     
-          const row = `"${refenence}","${title}","${category}","${type_of_presentation}","${authors}","${introduction}","${methods}","${results}","${discussion}","${keywords}","${attendance_certificate}","${summary}","${reviewed}","${score}","${comments}"\n`;
+          const row = `"${createdAt}","${updatedAt}","${refenence}","${title}","${category}","${type_of_presentation}","${authors}","${introduction}","${methods}","${results}","${discussion}","${keywords}","${attendance_certificate}","${summary}","${reviewed}","${score}","${comments}"\n`;
           csvContent += row;
         });
     

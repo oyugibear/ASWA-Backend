@@ -59,6 +59,33 @@ async function sendWelcomeEmail (email) {
       console.log("Message sent: %s", info.messageId);
 }
 
+async function sendSubmissionRecievedEmail (email) {
+    const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        host: "smtp.gmail.com",
+        port: 587,
+        secure: false,
+        auth: {
+          // TODO: replace `user` and `pass` values from <https://forwardemail.net>
+          user: process.env.SENDERS_EMAIL,
+          pass: process.env.SENDERS_PASSWORD
+        }
+    });
+
+    const info = await transporter.sendMail({
+        from: {
+            name: 'Abstract Submission Web Application',
+            address: process.env.SENDERS_EMAIL,
+        }, // sender address
+        to: email, // list of receivers
+        subject: "Thank you for your submission", // Subject line
+        text: "Thank you for submiting your request, please await further instructions from the organisers.", // plain text body
+        // html: "<b>Hello world?</b>", // html body
+      });
+    
+      console.log("Message sent: %s", info.messageId);
+}
 
 
-module.exports = {sendWelcomeEmail, sendForgotEmail}
+
+module.exports = {sendWelcomeEmail, sendForgotEmail, sendSubmissionRecievedEmail}
