@@ -9,6 +9,7 @@ router.get('/researchs', ResearchController.getAllResearch)
 router.get('/research/:id', ResearchController.getOneResearch)
 router.put('/research/review/:id', ResearchController.reviewOneResearch)
 router.get('/download', ResearchController.downloadData);
+router.get('/reviewdsubsdownload', ResearchController.downloadreviewedsubsData);
 
 
 module.exports = router;

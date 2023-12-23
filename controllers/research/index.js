@@ -82,6 +82,58 @@ class ResearchController extends AbstractController {
       }
     }
 
+    static async downloadreviewedsubsData(req, res) {
+      try {
+        const researchs = await ResearchService.getResearchs();
+
+        const fitered = researchs.filter(research => research.reviewed === true)
+
+        if (!fitered || fitered.length === 0) {
+          res.status(404).send('No research data found.');
+          return;
+        }
+    
+        // Prepare CSV content
+        let csvContent = 'Date Added,Reviewed Date,Reference,Title,Category,Type of Presentation,Authors,Introduction,Methods,Results,Discussion,Keywords,Attendance Certificate,Summary,Reviewed,Grade,Comments\n';
+    
+        fitered.forEach(research => {
+          const {
+            createdAt,
+            updatedAt,
+            refenence,
+            title,
+            category,
+            type_of_presentation,
+            authors,
+            introduction,
+            methods,
+            results,
+            discussion,
+            keywords,
+            attendance_certificate,
+            summary,
+            reviewed,
+            score,
+            comments,
+          } = research;
+    
+          const row = `"${createdAt}","${updatedAt}","${refenence}","${title}","${category}","${type_of_presentation}","${authors}","${introduction}","${methods}","${results}","${discussion}","${keywords}","${attendance_certificate}","${summary}","${reviewed}","${score}","${comments}"\n`;
+          csvContent += row;
+        });
+    
+        // Set headers for CSV download
+        res.setHeader('Content-Type', 'text/csv');
+        res.setHeader('Content-Disposition', 'attachment; filename=reviewedResearch_data.csv');
+    
+        // Stream the CSV content to the response
+        res.status(200);
+        res.write(csvContent, 'utf-8');
+        res.end();
+      } catch (error) {
+        console.error(error);
+        res.status(500).send('Internal Server Error');
+      }
+    }
     static async downloadData(req, res) {
       try {
         const researchs = await ResearchService.getResearchs();
