@@ -25,6 +25,9 @@ const userSchema = new mongoose.Schema({
     specialization: {
         type: String,
     },
+    assignedResearchs: {
+        type: Array,
+    },
     city: {
         required: true,
         type: String,
