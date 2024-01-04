@@ -15,6 +15,15 @@ class UserService extends AbstractService {
       return users
     }
   
+    static async updateUser(id, data) {
+      const user = await AbstractService.editDocument(userModel, id, data)
+
+      console.log(user)
+      if(!user) throw new AppError("could not update the user data", 400)
+
+      return user
+    }
+  
   }
   
   module.exports = UserService

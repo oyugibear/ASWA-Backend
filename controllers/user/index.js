@@ -73,14 +73,14 @@ class UserController extends AbstractController {
           }
       
           // Prepare CSV content
-          let csvContent = 'Date Creater,Name,email,organization,department,city,country,role\n';
+          let csvContent = 'Date Creater,Name,email,specialization,organization,department,city,country,role\n';
       
           filteredData.forEach(user => {
             const {
                 createdAt,
                 name,
                 email,
-            //   function,
+                specialization,
                 organization,
                 department,
                 city,
@@ -88,7 +88,7 @@ class UserController extends AbstractController {
                 role,
             } = user;
       
-            const row = `"${createdAt}","${name}","${email}","${organization}","${department}","${country}","${city}","${role}"\n`;
+            const row = `"${createdAt}","${name}","${email}","${specialization}","${organization}","${department}","${country}","${city}","${role}"\n`;
             csvContent += row;
           });
       
@@ -104,6 +104,18 @@ class UserController extends AbstractController {
           console.error(error);
           res.status(500).send('Internal Server Error');
         }
+    }
+    static async updateUser(req, res) {
+      try {
+        const { id } = req.params;
+        console.log("id ***********", req.params)
+        const user = await UserService.updateUser(id, req.body);
+        if (user) {
+          AbstractController.successReponse(res, user, 200, "user updated")
+        }
+      } catch (error) {
+          console.log(error)
+      }
     }
 }
 

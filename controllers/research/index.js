@@ -64,6 +64,53 @@ class ResearchController extends AbstractController {
       
     }
 
+    static async getReviewersResearchs(req, res) {
+      const id = req.params.id;
+      try {
+        const researchs = await ResearchService.getResearchs();
+        const user = await usermodel.findById(id);
+        const specialization = user?.specialization;
+
+        // Get the number of users that match the specialization
+        const matchingUsersCount = await usermodel.countDocuments({ specialization });
+
+        // Calculate the number of researches per reviewer
+        const researchesPerReviewer = Math.floor(researchs.length / matchingUsersCount);
+
+        // Filter researches based on category and reviewed status
+        const filteredResearchs = researchs.filter(
+          (research) => research.reviewed === false && research.category === specialization
+        );
+
+        // Assign researches to reviewers
+        const reviewers = [];
+        let startIndex = 0;
+        for (let i = 0; i < matchingUsersCount; i++) {
+          const endIndex = startIndex + researchesPerReviewer;
+          const reviewerResearchs = filteredResearchs.slice(startIndex, endIndex);
+          const reviewer = {
+            id: i + 1, // Assign a unique ID to each reviewer
+            researchs: reviewerResearchs.map((research) => research._id), // Save the IDs of the assigned researches
+          };
+
+          console.log("reviewerResearchs: ", reviewerResearchs);
+          // Save the assigned researches to the reviewer's data
+          // await usermodel.findByIdAndUpdate(user._id, { $push: { assignedResearchs: reviewerResearchs } });
+
+          reviewers.push(reviewer);
+          startIndex = endIndex;
+        }
+
+        if (reviewers.length > 0) {
+          res.status(200).send(reviewers);
+        } else {
+          res.status(404).send('No research data found for reviewers.');
+        }
+      } catch (error) {
+        res.status(500).send(error);
+      }
+    }
+
     static async reviewOneResearch(req, res) {
 
       try {
